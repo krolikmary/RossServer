@@ -88,10 +88,10 @@ class TCPSender:
                 conn.close()
             self._conList.clear()
 
+if __name__ == "__main__":
+    tcpServer = TCPSender("192.168.0.112")
+    tcpServer.start()
 
-tcpServer = TCPSender("192.168.0.112")
-tcpServer.start()
+    time.sleep(60)
 
-time.sleep(60)
-
-tcpServer.stop()
+    tcpServer.stop()
