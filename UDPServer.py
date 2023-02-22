@@ -7,12 +7,14 @@ from typing import Callable, Any
 import TSLExceptions
 from loguru import logger as lg
 
+from MessagersInterfaces import Notifier, Listener
 
-class UDPListener:
+
+class UDPServer(Notifier[bytes]):
     """
     UDP multithreading server to notify listener about new messages
     """
-    def __init__(self, listener: Callable[[bytes, Any, UDPListener], None], host="127.0.0.1", port=8080,
+    def __init__(self, listener: Listener[bytes], host="127.0.0.1", port=8080,
                  buffer_size=1024):
         """
         :param listener: function that will be called for each new message
@@ -50,7 +52,7 @@ class UDPListener:
                 while not self._stopEvent.is_set():
                     try:
                         message, address = sock.recvfrom(self._bufferSize)
-                        self._listener(message, address, self)
+                        self._listener(message, self)
                     except BlockingIOError:
                         pass
 
@@ -61,12 +63,3 @@ class UDPListener:
         with self._sendMutex:
             lg.debug(f"UDPListener at {self._host}:{self._port} is stopping")
             self._stopEvent.set()
-
-
-if __name__ == "__main__":
-    udp_listener = UDPListener(lambda m, a, l: lg.info(f"Got message: {m} from {a}"), host="192.168.0.112")
-    udp_listener.run()
-
-    time.sleep(30)
-
-    udp_listener.stop()
