@@ -2,7 +2,7 @@ import socket
 import threading
 import time
 from loguru import logger as lg
-import TSLExceptions
+import ServersExceptions
 from MessagersInterfaces import Listener, T, Notifier
 
 
@@ -33,7 +33,7 @@ class TCPServer(Listener[bytes]):
         """
         self._stopEvent = threading.Event()
         if self._hostMutex.locked():
-            raise TSLExceptions.ServerAlreadyStartedException()
+            raise ServersExceptions.ServerAlreadyStartedException()
         lg.info(f"started hosting at {self._host}:{self._port}")
         with self._hostMutex:
             with socket.socket() as sock:
