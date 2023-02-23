@@ -1,15 +1,12 @@
 import socket
 import threading
 import time
-
 from loguru import logger as lg
+import TSLExceptions
+from MessagersInterfaces import Listener, T, Notifier
 
 
-class SenderAlreadyStartedException(Exception):
-    pass
-
-
-class TCPSender:
+class TCPServer(Listener[bytes]):
     """
         Simple multithreading TCP server to send similar message to several clients on one port
     """
@@ -36,7 +33,7 @@ class TCPSender:
         """
         self._stopEvent = threading.Event()
         if self._hostMutex.locked():
-            raise SenderAlreadyStartedException()
+            raise TSLExceptions.ServerAlreadyStartedException()
         lg.info(f"started hosting at {self._host}:{self._port}")
         with self._hostMutex:
             with socket.socket() as sock:
@@ -53,7 +50,7 @@ class TCPSender:
                         pass
         lg.info(f"stopped hosting at {self._host}:{self._port}")
 
-    def sendAll(self, message: bytes):
+    def send_all(self, message: bytes):
         """
         send the message to all accepted clients
 
@@ -71,6 +68,9 @@ class TCPSender:
                     conn.close()
                     self._conList.remove(conn)
 
+    def on_message(self, message: bytes, notifier: Notifier[bytes]):
+        self.send_all(message)
+
     def stop(self):
         """
         stops accepting new clients
@@ -78,7 +78,7 @@ class TCPSender:
         lg.debug(f"request to stop at {self._host}:{self._port}")
         self._stopEvent.set()
 
-    def clearClients(self):
+    def clear_clients(self):
         """
         removes all clients
         """
@@ -88,10 +88,12 @@ class TCPSender:
                 conn.close()
             self._conList.clear()
 
+
 if __name__ == "__main__":
-    tcpServer = TCPSender("192.168.0.112")
+    from UDPServer import UDPServer
+
+    tcpServer = TCPServer("192.168.0.112")
     tcpServer.start()
 
-    time.sleep(60)
-
-    tcpServer.stop()
+    udpServer = UDPServer(tcpServer, "192.168.0.112", port=1337)
+    udpServer.run()
