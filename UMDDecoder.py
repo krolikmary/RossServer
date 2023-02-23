@@ -1,4 +1,7 @@
 from __future__ import annotations
+
+from functools import reduce
+
 import ServersExceptions
 from MessagersInterfaces import Listener, Notifier
 from loguru import logger as lg
@@ -18,11 +21,26 @@ class TSLEvent:
         """
         self.cameraNum = camera_num
         self.tallies = tallies.copy()
-        self.message = message
+        self.message = message[:16].ljust(16)
         self.brightness = brightness
 
     def __str__(self) -> str:
         return f"#{self.cameraNum},\tstate {list(map(int, self.tallies))},\tbrght={self.brightness},\tmsg=\"{self.message}\""
+
+    def to_bytes(self) -> bytes:
+        ans = [self.cameraNum + 0x80, 0]
+        if self.brightness == 0:
+            pass
+        elif self.brightness == 1 / 2:
+            ans[1] += 1
+        elif self.brightness == 1 / 7:
+            ans[1] += 2
+        else:
+            ans[1] += 3
+        for tally in self.tallies[::-1]:
+            ans[1] <<= 1
+            ans[1] += tally
+        return bytes(ans) + self.message.encode()
 
 
 def get_event_by_message(message: bytes) -> TSLEvent:
@@ -61,6 +79,7 @@ class UMDDecoder(Listener[bytes], Notifier[TSLEvent]):
     """
         converter of TSL messages to TSL events
     """
+
     def __init__(self, listener: Listener[TSLEvent]):
         self._listener = listener
 
@@ -74,5 +93,6 @@ class UMDDecoder(Listener[bytes], Notifier[TSLEvent]):
             if len(submessage) != 18:
                 lg.warning(f"Got incorrect message of len {len(message)}, last part is {submessage}")
                 break
+            lg.info(f"{get_event_by_message(submessage).to_bytes()} - delete this log")
             self._listener(get_event_by_message(submessage), self)
             start += 18
