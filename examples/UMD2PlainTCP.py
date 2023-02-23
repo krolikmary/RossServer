@@ -1,3 +1,11 @@
+"""
+An example of passing messages using observer (Notifier[T] -> Listener[T]) pattern
+
+Scheme:
+                        bytes               TSLEvent                str                 bytes
+socket - - > UDPServer -------> UMDDecoder ----------> AnyToString -----> StringToByte -------> TCPServer - - > socket
+"""
+
 if __name__ == "__main__":
     from UDPServer import UDPServer
     from TCPServer import TCPServer
