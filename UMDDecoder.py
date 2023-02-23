@@ -93,6 +93,5 @@ class UMDDecoder(Listener[bytes], Notifier[TSLEvent]):
             if len(submessage) != 18:
                 lg.warning(f"Got incorrect message of len {len(message)}, last part is {submessage}")
                 break
-            lg.info(f"{get_event_by_message(submessage).to_bytes()} - delete this log")
             self._listener(get_event_by_message(submessage), self)
             start += 18
