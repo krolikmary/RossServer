@@ -50,6 +50,7 @@ class UDPServer(Notifier[bytes]):
                 while not self._stopEvent.is_set():
                     try:
                         message, address = sock.recvfrom(self._bufferSize)
+                        lg.info(f"new message at {self._host}:{self._port}: {message}")
                         self._listener(message, self)
                     except BlockingIOError:
                         pass
