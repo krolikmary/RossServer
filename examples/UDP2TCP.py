@@ -6,8 +6,10 @@ Scheme:
 socket - - - > UDPServer -------> TCPServer - - - > socket
 """
 
-
 if __name__ == "__main__":
+    import sys
+
+    sys.path.append('../')
     from UDPServer import UDPServer
     from TCPServer import TCPServer
 

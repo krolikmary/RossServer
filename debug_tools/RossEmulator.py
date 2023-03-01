@@ -1,8 +1,12 @@
 if __name__ == "__main__":
+    import sys
+
+    sys.path.append('../')
+
     import socket
     from UMDDecoder import TSLEvent
 
-    dst_ip = "192.168.0.112"
+    dst_ip = "127.0.0.1"
     dst_port = 1337
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     requests = []
