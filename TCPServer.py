@@ -2,6 +2,8 @@ import socket
 import threading
 import time
 from loguru import logger as lg
+from typing import List
+
 import ServersExceptions
 from MessagersInterfaces import Listener, T, Notifier
 
@@ -10,14 +12,17 @@ class TCPServer(Listener[bytes]):
     """
         Simple multithreading TCP server to send similar message to several clients on one port
     """
+    # TODO implement repeat timer and repeat on new clients
 
     def __init__(self, host="127.0.0.1", port=8080):
         self._host = host
         self._port = port
         self._conListMutex = threading.Lock()
         self._hostMutex = threading.Lock()
-        self._conList: list[socket.socket] = []
+        self._conList: List[socket.socket] = []
         self._stopEvent = threading.Event()
+        self._timeToRepeat = -1
+        self._repeatOnNew = False
 
     def start(self):
         """
