@@ -12,9 +12,15 @@ class TCPServer(Listener[bytes]):
     """
         Simple multithreading TCP server to send similar message to several clients on one port
     """
+
     # TODO implement repeat timer and repeat on new clients
 
-    def __init__(self, host="127.0.0.1", port=8080):
+    def __init__(self, host="127.0.0.1", port=8080, repeat_for_new=False):
+        """
+        :param host: ip address of server
+        :param port: port of server
+        :param repeat_for_new: if True then server will repeat the last message for new clients
+        """
         self._host = host
         self._port = port
         self._conListMutex = threading.Lock()
@@ -22,7 +28,8 @@ class TCPServer(Listener[bytes]):
         self._conList: List[socket.socket] = []
         self._stopEvent = threading.Event()
         self._timeToRepeat = -1
-        self._repeatOnNew = False
+        self._repeatOnNew = repeat_for_new
+        self._lastMsg = b""
 
     def start(self):
         """
@@ -50,6 +57,13 @@ class TCPServer(Listener[bytes]):
                         conn, addr = sock.accept()
                         with self._conListMutex:
                             lg.debug(f"new connection at {self._host}:{self._port} from {addr}")
+                            if self._repeatOnNew:
+                                try:
+                                    conn.send(self._lastMsg)
+                                except socket.error:
+                                    lg.debug(f"{conn.getpeername()} disconnected from {self._host}:{self._port}")
+                                    conn.close()
+                                    continue
                             self._conList.append(conn)
                     except socket.error:
                         pass
@@ -65,6 +79,7 @@ class TCPServer(Listener[bytes]):
         """
         lg.debug(f"sending message by {self._host}:{self._port}: {message}")
         with self._conListMutex:
+            self._lastMsg = message
             for conn in list(self._conList):
                 try:
                     conn.send(message)
