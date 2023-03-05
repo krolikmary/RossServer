@@ -13,7 +13,6 @@ class TCPServer(Listener[bytes]):
         Simple multithreading TCP server to send similar message to several clients on one port
     """
 
-    # TODO implement repeat timer and repeat on new clients
 
     def __init__(self, host="127.0.0.1", port=8080, repeat_for_new=False):
         """
