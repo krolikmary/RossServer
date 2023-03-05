@@ -5,6 +5,7 @@ Scheme:
                           bytes               TSLEvent
 socket - - - > UDPServer -------> UMDDecoder ----------> ListenerLogger - - - > loguru
 """
+from RossServer import RossDecoder
 
 if __name__ == "__main__":
     import sys
@@ -15,6 +16,7 @@ if __name__ == "__main__":
     from UtilityDecoders import ListenerLogger
 
     listenerLogger = ListenerLogger()
-    umdDecoder = UMDDecoder(listenerLogger)
+    rossDecoder = RossDecoder(listenerLogger)
+    umdDecoder = UMDDecoder(rossDecoder)
     udpServer = UDPServer(umdDecoder, host="127.0.0.1", port=1337)
     udpServer.run()
