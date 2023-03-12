@@ -5,7 +5,6 @@ Scheme:
                         bytes               TSLEvent                str                 bytes
 socket - - > UDPServer -------> UMDDecoder ----------> AnyToString -----> StringToByte -------> TCPServer - - > socket
 """
-from RossServer import RossDecoder
 
 if __name__ == "__main__":
     import sys
@@ -16,8 +15,9 @@ if __name__ == "__main__":
     from TCPServer import TCPServer
     from UtilityDecoders import AnyToString, StringToByte
     from UMDDecoder import UMDDecoder
+    from RossServer import RossDecoder
 
-    tcpServer = TCPServer(host="192.168.0.112", port=8080, repeat_for_new=True)
+    tcpServer = TCPServer(host="0.0.0.0", port=8080, repeat_for_new=True)
     tcpServer.start()
     udpServer = UDPServer(
         UMDDecoder(
@@ -28,7 +28,7 @@ if __name__ == "__main__":
                 )
             )
         ),
-        host="192.168.0.112",
+        host="0.0.0.0",
         port=1337
     )
     udpServer.run()
