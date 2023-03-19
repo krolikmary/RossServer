@@ -20,6 +20,12 @@ class RossEvent:
     def __str__(self):
         return f"Camera #{self.camera_id} is {self.state}"
 
+    def get_camera_id(self) -> int:
+        return self.camera_id
+
+    def get_camera_state(self) -> int:
+        return self.state.value
+
 
 def umd_to_ross_event(umd_msg: TSLEvent) -> RossEvent:
     is_pgm = umd_msg.tallies[1]
