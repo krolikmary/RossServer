@@ -5,7 +5,6 @@ Scheme:
                           bytes               TSLEvent
 socket - - - > UDPServer -------> UMDDecoder ----------> ListenerLogger - - - > loguru
 """
-from RossServer import RossDecoder
 
 if __name__ == "__main__":
     import sys
