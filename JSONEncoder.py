@@ -16,7 +16,10 @@ class RossEventToJson(Listener[RossEvent], Notifier[bytes]):
 
     def on_message(self, message: RossEvent, notifier: Notifier[RossEvent]):
         '''Recieves int "num_of_cam and RossState.OUT.value and give both variables
-        to listener in ascii form'''
+        to listener in ascii form
+        Param: Rossstate
+        Returns: json in ASCII
+        '''
         self._list_of_cam[message.get_camera_id()] = message.get_camera_state()
         local_list = self._list_of_cam
         local_list = json.dumps(self._list_of_cam, separators=(',', ':'))
