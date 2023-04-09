@@ -9,15 +9,15 @@ class RossEventToTSLUMD(Listener[RossEvent], Notifier[bytes]):
 
     def on_message(self, message: RossEvent, notifier: Notifier[RossEvent]):
         """
-        with TSLEvent modul turns RossEvent message to bytes
+        With TSLEvent module turns RossEvent message to bytes
         Param: RossEvent
-        Returns: bytes
+        Notifies: bytes
         """
         mes_state = message.get_camera_state()
         list_of_tallies = [False] * 4
         if mes_state == 1:
             list_of_tallies = [True, False, False, False]
-        elif mes_state == 2:,,,,,2
+        elif mes_state == 2:
             list_of_tallies = [False, True, False, False]
         elif mes_state == 3:
             list_of_tallies = [True, True, False, False]
