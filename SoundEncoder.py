@@ -12,7 +12,7 @@ class SoundEncoder(Listener[RossEvent]):
         self._get_file_name = file_name_fun
         self._mx = pygame.mixer
         self._mx.init()
-        self._last_live = -1
+        self._lives: dict[int, bool] = dict()
 
     def get_file_name(self, event: RossEvent) -> str:
         if self._get_file_name:
@@ -22,11 +22,14 @@ class SoundEncoder(Listener[RossEvent]):
 
     def on_message(self, message: RossEvent, notifier: Notifier[RossEvent]):
         if (message.state == RossState.PGM or message.state == RossState.BOTH) and \
-                message.camera_id != self._last_live:
+                self._lives.get(message.camera_id) is not True:
             filename = self._directory + self.get_file_name(message)
-            if not os.path.isfile(filename):
-                return
-            self._mx.music.stop()
-            self._mx.music.load(self._directory + self.get_file_name(message))
-            self._mx.music.play()
-            self._last_live = message.camera_id
+            if os.path.isfile(filename):
+                self._mx.music.stop()
+                self._mx.music.load(self._directory + self.get_file_name(message))
+                self._mx.music.play()
+
+        if message.state == RossState.PGM or message.state == RossState.BOTH:
+            self._lives[message.camera_id] = True
+        else:
+            self._lives[message.camera_id] = False
