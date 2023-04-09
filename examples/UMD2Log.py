@@ -1,6 +1,5 @@
 """
 An example of passing messages using observer (Notifier[T] -> Listener[T]) pattern
-
 Scheme:
                           bytes               TSLEvent
 socket - - - > UDPServer -------> UMDDecoder ----------> ListenerLogger - - - > loguru
