@@ -106,6 +106,15 @@ class TCPServer(Listener[bytes]):
                 conn.close()
             self._conList.clear()
 
+    def get_ip(self) -> str:
+        return self._host
+
+    def get_port(self) -> int:
+        return self._port
+
+    def get_repeat_for_new(self) -> bool:
+        return self._repeatOnNew
+
 
 if __name__ == "__main__":
     from UDPServer import UDPServer
