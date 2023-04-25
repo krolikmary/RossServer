@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from typing import TypeVar, Generic
+from typing import TypeVar, Generic, Dict
 
+from ServerDescriptor import Descriptor
 
 T = TypeVar('T')
 
@@ -24,3 +25,5 @@ class Listener(Generic[T]):
     def __call__(self, message: T, notifier: Notifier[T]):
         self.on_message(message, notifier)
 
+    def get_descriptor(self) -> Descriptor:
+        return Descriptor()

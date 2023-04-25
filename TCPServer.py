@@ -82,7 +82,7 @@ class TCPServer(Listener[bytes]):
                 try:
                     conn.send(message)
                 except socket.error:
-                    lg.debug(f"{conn.getpeername()} disconnected from {self._host}:{self._port}")
+                    lg.debug(f"client disconnected from {self._host}:{self._port}")
                     conn.close()
                     self._conList.remove(conn)
 
@@ -105,6 +105,15 @@ class TCPServer(Listener[bytes]):
             for conn in self._conList:
                 conn.close()
             self._conList.clear()
+
+    def get_ip(self) -> str:
+        return self._host
+
+    def get_port(self) -> int:
+        return self._port
+
+    def get_repeat_for_new(self) -> bool:
+        return self._repeatOnNew
 
 
 if __name__ == "__main__":
