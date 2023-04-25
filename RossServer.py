@@ -1,7 +1,6 @@
 from enum import Enum
 
 from MessagersInterfaces import Listener, Notifier, T
-from ServerConfig import ServerConfig
 from UMDDecoder import TSLEvent
 
 

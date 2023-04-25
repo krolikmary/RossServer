@@ -40,12 +40,12 @@ class Multiplexor(Listener[RossEvent], Notifier[RossEvent]):
         with self._mapMutex:
             return self._listenerMap.copy()
 
-    def delete_listener(self, id: int) -> Listener[RossEvent]:
+    def delete_listener(self, listener_id: int) -> Listener[RossEvent]:
         """
         removes listener from set of listeners to be notified
 
-        :param id: id of listener to not notify anymore
+        :param listener_id: id of listener to not notify anymore
         :return: the listener
         """
         with self._mapMutex:
-            return self._listenerMap.pop(id)
+            return self._listenerMap.pop(listener_id)
