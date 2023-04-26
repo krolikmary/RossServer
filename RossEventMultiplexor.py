@@ -2,7 +2,7 @@ import threading
 from typing import List, Set, Dict
 
 from MessagersInterfaces import Listener, T, Notifier
-from RossServer import RossEvent
+from RossEvent import RossEvent
 
 
 class Multiplexor(Listener[RossEvent], Notifier[RossEvent]):

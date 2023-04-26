@@ -7,6 +7,7 @@ if __name__ == "__main__":
     mdl.add_json(7355)
     mdl.add_tslumd(1488)
     oddId = mdl.add_tslumd(6789)
+    mdl.add_sound('../sounds/')
     print("added new servers:")
     print(mdl.get_descriptors())
     print("whoops, i think 2 tslumd servers are useless, let me delete the odd one")
