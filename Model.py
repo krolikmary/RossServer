@@ -1,78 +1,18 @@
 from __future__ import annotations
 
-from enum import Enum
-
-from typing import Dict
+from typing import Dict, Optional, Callable
 
 from RossEventMultiplexor import Multiplexor
 from JSONEncoder import RossEventToJson
-from MessagersInterfaces import Listener, Notifier
-from RossServer import RossEvent, RossDecoder
+from MessagersInterfaces import Notifier, OutputServer, NetworkOutputServer
+from RossServer import RossDecoder
+from RossEvent import RossEvent
 from ServerDescriptor import Descriptor, OutputProto, NetworkTransport
 from TCPServer import TCPServer
 from TSLUMDEncoder import RossEventToTSLUMD
 from UDPServer import UDPServer
 from UMDDecoder import UMDDecoder
-
-
-class OutputServer(Listener[RossEvent]):
-    def start(self):
-        """
-            begins a work of server
-            if your server doesnt require to be started before sending messages
-            you can just write pass in body
-        """
-        raise NotImplementedError()
-
-    def stop(self):
-        """
-            stop a work of server
-            if your server doesnt require to be stopped when it's useless anymore
-            you can just write pass in body
-        """
-        raise NotImplementedError()
-
-    def get_proto(self) -> OutputProto:
-        """
-            returns an OutputProto that describes which protocol it uses
-            used to generate a Descriptor
-        """
-        raise NotImplementedError()
-
-    def get_descriptor(self) -> Descriptor:
-        """
-            returns a Descriptor that describes a server
-        """
-        ans = Descriptor()
-        ans.protocol = self.get_proto()
-        return ans
-
-
-class NetworkOutputServer(OutputServer):
-    def get_ip(self) -> str:
-        """
-            returns an ip of the hostname it uses
-        """
-        raise NotImplementedError()
-
-    def get_port(self) -> int:
-        """
-            returns a port which the server is listening
-        """
-        raise NotImplementedError()
-
-    def get_transport(self) -> NetworkTransport:
-        """
-            returns a transport the server is using
-        """
-        raise NotImplementedError()
-
-    def get_descriptor(self) -> Descriptor:
-        ans = super().get_descriptor()
-        ans.ip = self.get_ip()
-        ans.port = self.get_port()
-        ans.transport = self.get_transport()
-        return ans
+from SoundEncoder import SoundEncoder
 
 
 class TSLTCPServer(NetworkOutputServer):
@@ -165,6 +105,14 @@ class ServersModel:
             creates and starts a new TSLTCPServer
         """
         server = TSLTCPServer(self._ip, port, repeat_for_new)
+        server.start()
+        return self._multiplexor.add_listener(server)
+
+    def add_sound(self, sound_directory ="./sounds/", file_name_fun: Optional[Callable[[RossEvent], str]] = None) -> int:
+        """
+            creates and starts a new SoundServer (SoundEncoder)
+        """
+        server = SoundEncoder(sound_directory)
         server.start()
         return self._multiplexor.add_listener(server)
 

@@ -1,5 +1,5 @@
 from MessagersInterfaces import Listener, Notifier, T
-from RossServer import RossEvent
+from RossEvent import RossEvent
 from UMDDecoder import TSLEvent
 
 
