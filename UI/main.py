@@ -22,21 +22,18 @@ def main():
 
 @app.route('/add_message', methods=['POST'])
 def add_message():
-
+    ID = request.form['ID']
     port = request.form['port']
     protocol = request.form['protocol']
     lg.debug(f"Got protocol {protocol}")
-    if port < "0" or port > "65536":
-        return redirect(url_for('main'))
-    else:
-        if protocol == "sound":
-            servers.add_sound("../sounds/")
-        if protocol == "TSL UMD v3.1":
-            servers.add_tslumd(port)
-        if protocol == "JSON":
-            servers.add_json(port)
+    if protocol == "sound":
+        servers.add_sound("../sounds/")
+    if protocol == "TSL UMD v3.1":
+        servers.add_tslumd(port)
+    if protocol == "JSON":
+        servers.add_json(port)
 
-        return redirect(url_for('main'))
+    return redirect(url_for('main'))
 
 
 @app.route('/delete', methods=['POST'])
