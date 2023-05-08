@@ -3,7 +3,7 @@ from RossEvent import RossEvent
 from UMDDecoder import TSLEvent
 
 
-class RossEventToTSLUMD(Listener[RossEvent], Notifier[bytes]):
+class RossEventToEzTSLUMD(Listener[RossEvent], Notifier[bytes]):
     def __init__(self, listener: Listener[bytes]):
         self._listener = listener
 

@@ -2,7 +2,7 @@
 An example of passing messages using observer (Notifier[T] -> Listener[T]) pattern
 Scheme:
                           bytes               TSLEvent                RossEvent                  bytes
-socket - - - > UDPServer -------> UMDDecoder ----------> RossDecoder ----------> RossEventToTSLUMD ----==
+socket - - - > UDPServer -------> UMDDecoder ----------> RossDecoder ----------> RossEventToEzTSLUMD ----==
 
 ==----> ListenerLogger - - - > loguru
 """
@@ -12,13 +12,13 @@ if __name__ == "__main__":
 
     sys.path.append('../')
     from UDPServer import UDPServer
-    from EzTSLUMDEncoder import RossEventToTSLUMD
+    from EzTSLUMDEncoder import RossEventToEzTSLUMD
     from RossServer import RossDecoder
     from UMDDecoder import UMDDecoder
     from UtilityDecoders import ListenerLogger
 
     listenerLogger = ListenerLogger()
-    eztslumdEncoder = RossEventToTSLUMD(listenerLogger)
+    eztslumdEncoder = RossEventToEzTSLUMD(listenerLogger)
     rossDecoder = RossDecoder(eztslumdEncoder)
     umdDecoder = UMDDecoder(rossDecoder)
     udpServer = UDPServer(umdDecoder, host="127.0.0.1", port=1337)
