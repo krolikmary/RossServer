@@ -28,6 +28,9 @@ class TSLEvent:
         return f"#{self.cameraNum},\tstate {list(map(int, self.tallies))},\tbrght={self.brightness},\tmsg=\"{self.message}\""
 
     def to_bytes(self) -> bytes:
+        return self.to_bytes_ez_tsl() + self.message.encode()
+
+    def to_bytes_ez_tsl(self) -> bytes:
         ans = [self.cameraNum + 0x80, 0]
         if self.brightness == 0:
             pass
@@ -40,7 +43,7 @@ class TSLEvent:
         for tally in self.tallies[::-1]:
             ans[1] <<= 1
             ans[1] += tally
-        return bytes(ans) + self.message.encode()
+        return bytes(ans)
 
 
 def get_event_by_message(message: bytes) -> TSLEvent:
