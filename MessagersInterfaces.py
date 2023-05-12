@@ -62,6 +62,9 @@ class OutputServer(Listener[RossEvent]):
         ans.protocol = self.get_proto()
         return ans
 
+    def get_filter_sest(self):
+        pass
+
 
 class NetworkOutputServer(OutputServer):
     def get_ip(self) -> str:

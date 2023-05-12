@@ -31,6 +31,7 @@ class Descriptor:
         self.ip: Optional[str] = None
         self.port: Optional[int] = None
         self.transport: Optional[NetworkTransport] = None
+        self.filtered_cameras: Optional[set[int]] = None
 
     def __repr__(self):
         ans = "Descriptor: \""

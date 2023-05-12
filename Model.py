@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from typing import Dict, Optional, Callable
 
+from EzTSLUMDEncoder import RossEventToEzTSLUMD
+from Filter import Filter
 from RossEventMultiplexor import Multiplexor
 from JSONEncoder import RossEventToJson
-from MessagersInterfaces import Notifier, OutputServer, NetworkOutputServer
+from MessagersInterfaces import Notifier, OutputServer, NetworkOutputServer, T
 from RossServer import RossDecoder
 from RossEvent import RossEvent
 from ServerDescriptor import Descriptor, OutputProto, NetworkTransport
@@ -40,6 +42,111 @@ class TSLTCPServer(NetworkOutputServer):
 
     def on_message(self, message: RossEvent, notifier: Notifier[RossEvent]):
         self._ross_event_to_tsl_umd(message, notifier)
+
+
+class EzTSLTCPServer(NetworkOutputServer):
+    def __init__(self, ip: str, port: int, repeat_for_new=False):
+        self._tcp_server = TCPServer(ip, port, repeat_for_new)
+        self._ross_event_to_tsl_umd = RossEventToEzTSLUMD(self._tcp_server)
+
+    def get_ip(self) -> str:
+        return self._tcp_server.get_ip()
+
+    def get_port(self) -> int:
+        return self._tcp_server.get_port()
+
+    def get_transport(self) -> NetworkTransport:
+        return NetworkTransport.TCP
+
+    def get_proto(self) -> OutputProto:
+        return OutputProto.TSLUMD
+
+    def start(self):
+        self._tcp_server.start()
+
+    def stop(self):
+        self._tcp_server.stop()
+
+    def on_message(self, message: RossEvent, notifier: Notifier[RossEvent]):
+        self._ross_event_to_tsl_umd(message, notifier)
+
+
+class FilteredTSLTCPServer(NetworkOutputServer):
+    """
+        Boxing for the TSLTCPServer that also includes
+        set of the necessary cameras
+    """
+    def __init__(self, ip: str, port: int, filtered_cameras: set[int], repeat_for_new=False):
+        self._tsltcp = TSLTCPServer(ip, port, repeat_for_new)
+        self._filter = Filter(self._tsltcp, filtered_cameras)
+
+    def get_ip(self) -> str:
+        return self._tsltcp.get_ip()
+
+    def get_port(self) -> int:
+        return self._tsltcp.get_port()
+
+    def get_transport(self) -> NetworkTransport:
+        return self._tsltcp.get_transport()
+
+    def start(self):
+        self._tsltcp.start()
+
+    def stop(self):
+        self._tsltcp.stop()
+
+    def get_proto(self) -> OutputProto:
+        return self._tsltcp.get_proto()
+
+    def on_message(self, message: T, notifier: Notifier[T]):
+        self._filter.on_message(message, notifier)
+
+    def get_descriptor(self) -> Descriptor:
+        ans = super().get_descriptor()
+        ans.ip = self.get_ip()
+        ans.port = self.get_port()
+        ans.transport = self.get_transport()
+        ans.filtered_cameras = self._filter.get_filter_set()
+        return ans
+
+
+class FilteredEzTSLTCPServer(NetworkOutputServer):
+    """
+        Boxing for the TSLTCPServer that also includes
+        set of the necessary cameras
+    """
+    def __init__(self, ip: str, port: int, filtered_cameras: set[int], repeat_for_new=False):
+        self._tsltcp = EzTSLTCPServer(ip, port, repeat_for_new)
+        self._filter = Filter(self._tsltcp, filtered_cameras)
+
+    def get_ip(self) -> str:
+        return self._tsltcp.get_ip()
+
+    def get_port(self) -> int:
+        return self._tsltcp.get_port()
+
+    def get_transport(self) -> NetworkTransport:
+        return self._tsltcp.get_transport()
+
+    def start(self):
+        self._tsltcp.start()
+
+    def stop(self):
+        self._tsltcp.stop()
+
+    def get_proto(self) -> OutputProto:
+        return self._tsltcp.get_proto()
+
+    def on_message(self, message: T, notifier: Notifier[T]):
+        self._filter.on_message(message, notifier)
+
+    def get_descriptor(self) -> Descriptor:
+        ans = super().get_descriptor()
+        ans.ip = self.get_ip()
+        ans.port = self.get_port()
+        ans.transport = self.get_transport()
+        ans.filtered_cameras = self._filter.get_filter_set()
+        return ans
 
 
 class JsonTCPServer(NetworkOutputServer):
@@ -108,7 +215,7 @@ class ServersModel:
         server.start()
         return self._multiplexor.add_listener(server)
 
-    def add_sound(self, sound_directory ="./sounds/", file_name_fun: Optional[Callable[[RossEvent], str]] = None) -> int:
+    def add_sound(self, sound_directory="./sounds/", file_name_fun: Optional[Callable[[RossEvent], str]] = None) -> int:
         """
             creates and starts a new SoundServer (SoundEncoder)
         """
