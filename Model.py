@@ -215,6 +215,30 @@ class ServersModel:
         server.start()
         return self._multiplexor.add_listener(server)
 
+    def add_eztslumd(self, port, repeat_for_new=False) -> int:
+        """
+            creates and starts a new EzTSLTCPServer
+        """
+        server = EzTSLTCPServer(self._ip, port, repeat_for_new)
+        server.start()
+        return self._multiplexor.add_listener(server)
+
+    def add_filtered_tslumd(self, port, filtered_cameras, repeat_for_new=False) -> int:
+        """
+            creates and starts a new FilteredTSLTCPServer
+        """
+        server = FilteredTSLTCPServer(self._ip, port, filtered_cameras, repeat_for_new)
+        server.start()
+        return self._multiplexor.add_listener(server)
+
+    def add_filtered_eztslumd(self, port, filtered_cameras, repeat_for_new=False) -> int:
+        """
+            creates and starts a new FilteredEzTSLTCPServer
+        """
+        server = FilteredEzTSLTCPServer(self._ip, port, filtered_cameras, repeat_for_new)
+        server.start()
+        return self._multiplexor.add_listener(server)
+
     def add_sound(self, sound_directory="./sounds/", file_name_fun: Optional[Callable[[RossEvent], str]] = None) -> int:
         """
             creates and starts a new SoundServer (SoundEncoder)

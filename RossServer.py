@@ -5,7 +5,7 @@ from UMDDecoder import TSLEvent
 
 def umd_to_ross_event(umd_msg: TSLEvent) -> RossEvent:
     """
-
+        function that converts TSLEvent to RossEvent
     """
     is_pgm = umd_msg.tallies[1]
     is_pvw = umd_msg.tallies[0]

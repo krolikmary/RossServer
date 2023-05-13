@@ -10,7 +10,7 @@ class RossState(Enum):
 
 class RossEvent:
     """
-
+        Class that descibes state of the camera
     """
     def __init__(self, camera_id: int, state: RossState):
         self.camera_id = camera_id

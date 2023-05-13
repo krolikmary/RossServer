@@ -62,7 +62,7 @@ class OutputServer(Listener[RossEvent]):
         ans.protocol = self.get_proto()
         return ans
 
-    def get_filter_sest(self):
+    def get_filter_set(self):
         pass
 
 
