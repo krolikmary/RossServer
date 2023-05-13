@@ -31,6 +31,7 @@ class Descriptor:
         self.ip: Optional[str] = None
         self.port: Optional[int] = None
         self.transport: Optional[NetworkTransport] = None
+        self.filtered_cameras: Optional[set[int]] = None
 
     def __repr__(self):
         ans = "Descriptor: \""
@@ -43,4 +44,7 @@ class Descriptor:
             ans += f"port: {self.port}; "
         if self.transport is not None:
             ans += f"transport: {self.transport}; "
+        if self.filtered_cameras is not None:
+            str_camera_list = ', '.join(str(i) for i in self.filtered_cameras)
+            ans += f"filtered cameras: {str_camera_list}; "
         return ans + "\""

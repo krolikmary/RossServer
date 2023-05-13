@@ -22,3 +22,6 @@ class Filter(Listener[RossEvent], Notifier[RossEvent]):
         len_of_set = len(self._plenty_of_cams)
         if message.get_camera_id() in self._plenty_of_cams:
             self._listener(message, self)
+
+    def get_filter_set(self):
+        return self._plenty_of_cams.copy()

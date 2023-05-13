@@ -19,12 +19,18 @@ class SoundEncoder(OutputServer):
         lg.info(f"created SoundEncoder in {directory}")
 
     def get_file_name(self, event: RossEvent) -> str:
+        """
+            returns the name of the mp3 file to play
+        """
         if self._get_file_name:
             return self._get_file_name(event)
         else:
             return f"{event.camera_id}.mp3"
 
     def on_message(self, message: RossEvent, notifier: Notifier[RossEvent]):
+        """
+            sends a message about camera statement
+        """
         if (message.state == RossState.PGM or message.state == RossState.BOTH) and \
                 self._lives.get(message.camera_id) is not True:
             lg.info(f"playing {self._directory + self.get_file_name(message)}")
@@ -42,6 +48,9 @@ class SoundEncoder(OutputServer):
             self._lives[message.camera_id] = False
 
     def get_proto(self) -> OutputProto:
+        """
+            returns output protocol
+        """
         return OutputProto.SOUND
 
     def start(self):
