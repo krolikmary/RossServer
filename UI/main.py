@@ -28,14 +28,16 @@ def add_message():
     lg.debug(f"Got protocol {protocol}")
     if port < "0" or port > "65536":
         return redirect(url_for('main'))
-    if protocol == "sound":
-        servers.add_sound("../sounds/")
-    if protocol == "TSL UMD v3.1":
-        servers.add_tslumd(port)
-    if protocol == "JSON":
-        servers.add_json(port)
+    else:
+        if protocol == "sound":
+            servers.add_sound("../sounds/")
+        if protocol == "TSL UMD v3.1":
+            servers.add_tslumd(port)
+        if protocol == "JSON":
+            servers.add_json(port)
 
-    return redirect(url_for('main'))
+        return redirect(url_for('main'))
+
 
 @app.route('/delete', methods=['POST'])
 def delete():
