@@ -59,7 +59,7 @@ class EzTSLTCPServer(NetworkOutputServer):
         return NetworkTransport.TCP
 
     def get_proto(self) -> OutputProto:
-        return OutputProto.TSLUMD
+        return OutputProto.EZTSLUMD
 
     def start(self):
         self._tcp_server.start()

@@ -12,6 +12,7 @@ class OutputProto(Enum):
     TSLUMD = 1
     JSON = 2
     BIN = 3
+    EZTSLUMD = 4
 
 
 class NetworkTransport(Enum):
